@@ -9,15 +9,12 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
 });
 
-(async () => {
-  try {
-    const client = await pool.connect();
-    console.log("✅ PostgreSQL Connected Successfully");
-    client.release();
-  } catch (err) {
-    console.error("❌ Database Connection Failed");
-    console.error(err);
-  }
-})();
+pool.on("connect", () => {
+  console.log("✅ PostgreSQL connected");
+});
+
+pool.on("error", (err) => {
+  console.error("❌ PostgreSQL error:", err);
+});
 
 module.exports = pool;

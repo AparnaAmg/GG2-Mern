@@ -12,6 +12,9 @@ import Categories from "./pages/Posts/Categories";
 import Tags from "./pages/Posts/Tags";
 import MediaLibrary from "./pages/media/MediaLibrary";
 import UploadMedia from "./pages/media/UploadMedia";
+import AddPage from "./pages/pages/AddPage";
+import AllPage from "./pages/pages/AllPage";
+import ViewPage from "./pages/pages/ViewPage";
 
 function App() {
   return (
@@ -55,6 +58,19 @@ function App() {
             </ProtectedRoute>
           }
         />
+<Route
+    path="/pages/add"
+    element={<AddPage />}
+/>
+<Route
+    path="/pages/edit/:id"
+    element={<AddPage />}
+/>
+<Route
+  path="/pages/view/:id"
+  element={<ViewPage />}
+/>
+<Route path="/pages" element={<AllPage />} />
 
         <Route
           path="/profile"

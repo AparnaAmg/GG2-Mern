@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 
 import {
   Drawer,
@@ -22,54 +21,121 @@ import {
   People,
   PersonAdd,
   AccountCircle,
-  Image,
   Settings,
   ExpandLess,
   ExpandMore,
   Add,
   ListAlt,
+  Web,
+  PhotoLibrary,
 } from "@mui/icons-material";
 
+
 export default function Sidebar() {
+
   const location = useLocation();
 
-  const [openPosts, setOpenPosts] = useState(true);
-  const [openUsers, setOpenUsers] = useState(false);
-  const [openMedia, setOpenMedia] = useState(false);
-  
+  // ==========================================
+  // MENU OPEN STATES
+  // ==========================================
+
+  const [openPosts, setOpenPosts] = useState(
+    location.pathname.startsWith("/posts")
+  );
+
+  const [openPages, setOpenPages] = useState(
+    location.pathname.startsWith("/pages")
+  );
+
+  const [openUsers, setOpenUsers] = useState(
+    location.pathname.startsWith("/users") ||
+    location.pathname === "/profile"
+  );
+
+  const [openMedia, setOpenMedia] = useState(
+    location.pathname.startsWith("/media")
+  );
+
+
+  // ==========================================
+  // ACTIVE MENU STYLE
+  // ==========================================
+
   const activeStyle = {
     bgcolor: "#2563EB",
     color: "#fff",
     borderRadius: 2,
     mx: 1,
+
     "& .MuiListItemIcon-root": {
       color: "#fff",
     },
+
+    "&:hover": {
+      bgcolor: "#1D4ED8",
+    },
   };
+
+
+  // ==========================================
+  // NORMAL MENU STYLE
+  // ==========================================
 
   const menuStyle = {
     borderRadius: 2,
     mx: 1,
     mb: 0.5,
     color: "#CBD5E1",
+
     "& .MuiListItemIcon-root": {
       color: "#94A3B8",
     },
+
     "&:hover": {
       bgcolor: "#1E293B",
       color: "#fff",
+
       "& .MuiListItemIcon-root": {
         color: "#fff",
       },
     },
   };
 
+
+  // ==========================================
+  // SUB MENU STYLE
+  // ==========================================
+
+  const subMenuStyle = {
+    pl: 5,
+    borderRadius: 2,
+    mx: 1,
+    mb: 0.5,
+    color: "#CBD5E1",
+
+    "& .MuiListItemIcon-root": {
+      color: "#94A3B8",
+    },
+
+    "&:hover": {
+      bgcolor: "#1E293B",
+      color: "#fff",
+
+      "& .MuiListItemIcon-root": {
+        color: "#fff",
+      },
+    },
+  };
+
+
   return (
+
     <Drawer
       variant="permanent"
       sx={{
         width: 260,
         flexShrink: 0,
+
         "& .MuiDrawer-paper": {
           width: 260,
           bgcolor: "#0F172A",
@@ -78,12 +144,18 @@ export default function Sidebar() {
         },
       }}
     >
+
+      {/* ========================================== */}
+      {/* LOGO */}
+      {/* ========================================== */}
+
       <Toolbar
         sx={{
           justifyContent: "center",
           py: 2,
         }}
       >
+
         <Typography
           variant="h5"
           fontWeight="bold"
@@ -91,13 +163,18 @@ export default function Sidebar() {
         >
           GG2 CMS
         </Typography>
+
       </Toolbar>
+
 
       <Box sx={{ px: 1 }}>
 
         <List>
 
-          {/* Dashboard */}
+
+          {/* ========================================== */}
+          {/* DASHBOARD */}
+          {/* ========================================== */}
 
           <ListItemButton
             component={Link}
@@ -108,250 +185,488 @@ export default function Sidebar() {
                 : menuStyle
             }
           >
+
             <ListItemIcon>
               <Dashboard />
             </ListItemIcon>
 
-            <ListItemText primary="Dashboard" />
+            <ListItemText
+              primary="Dashboard"
+            />
+
           </ListItemButton>
 
+
+          {/* ========================================== */}
           {/* POSTS */}
+          {/* ========================================== */}
 
           <ListItemButton
             sx={menuStyle}
-            onClick={() => setOpenPosts(!openPosts)}
+            onClick={() =>
+              setOpenPosts(!openPosts)
+            }
           >
+
             <ListItemIcon>
               <Article />
             </ListItemIcon>
 
-            <ListItemText primary="Posts" />
+            <ListItemText
+              primary="Posts"
+            />
 
-            {openPosts ? <ExpandLess /> : <ExpandMore />}
+            {openPosts
+              ? <ExpandLess />
+              : <ExpandMore />
+            }
+
           </ListItemButton>
 
-          <Collapse in={openPosts}>
 
-            <List>
+          <Collapse
+            in={openPosts}
+            timeout="auto"
+            unmountOnExit
+          >
+
+            <List
+              component="div"
+              disablePadding
+            >
+
+
+              {/* ALL POSTS */}
 
               <ListItemButton
                 component={Link}
                 to="/posts"
-                sx={{
-                  pl: 5,
-                  ...(location.pathname === "/posts"
-                    ? activeStyle
-                    : menuStyle),
-                }}
+                sx={
+                  location.pathname === "/posts"
+                    ? {
+                        ...subMenuStyle,
+                        ...activeStyle,
+                      }
+                    : subMenuStyle
+                }
               >
+
                 <ListItemIcon>
                   <ListAlt />
                 </ListItemIcon>
 
-                <ListItemText primary="All Posts" />
+                <ListItemText
+                  primary="All Posts"
+                />
+
               </ListItemButton>
+
+
+              {/* ADD POST */}
 
               <ListItemButton
                 component={Link}
                 to="/posts/add"
-                sx={{
-                  pl: 5,
-                  ...(location.pathname === "/posts/add"
-                    ? activeStyle
-                    : menuStyle),
-                }}
+                sx={
+                  location.pathname === "/posts/add"
+                    ? {
+                        ...subMenuStyle,
+                        ...activeStyle,
+                      }
+                    : subMenuStyle
+                }
               >
+
                 <ListItemIcon>
                   <Add />
                 </ListItemIcon>
 
-                <ListItemText primary="Add Post" />
+                <ListItemText
+                  primary="Add Post"
+                />
+
               </ListItemButton>
+
+
+              {/* CATEGORIES */}
 
               <ListItemButton
                 component={Link}
                 to="/posts/categories"
-                sx={{
-                  pl: 5,
-                  ...(location.pathname === "/posts/categories"
-                    ? activeStyle
-                    : menuStyle),
-                }}
+                sx={
+                  location.pathname ===
+                  "/posts/categories"
+                    ? {
+                        ...subMenuStyle,
+                        ...activeStyle,
+                      }
+                    : subMenuStyle
+                }
               >
+
                 <ListItemIcon>
                   <Category />
                 </ListItemIcon>
 
-                <ListItemText primary="Categories" />
+                <ListItemText
+                  primary="Categories"
+                />
+
               </ListItemButton>
+
+
+              {/* TAGS */}
 
               <ListItemButton
                 component={Link}
                 to="/posts/tags"
-                sx={{
-                  pl: 5,
-                  ...(location.pathname === "/posts/tags"
-                    ? activeStyle
-                    : menuStyle),
-                }}
+                sx={
+                  location.pathname === "/posts/tags"
+                    ? {
+                        ...subMenuStyle,
+                        ...activeStyle,
+                      }
+                    : subMenuStyle
+                }
               >
+
                 <ListItemIcon>
                   <LocalOffer />
                 </ListItemIcon>
 
-                <ListItemText primary="Tags" />
+                <ListItemText
+                  primary="Tags"
+                />
+
               </ListItemButton>
-
-              {/* <ListItemButton
-                component={Link}
-                to="/media"
-                sx={{
-                  pl: 5,
-                  ...(location.pathname === "/media"
-                    ? activeStyle
-                    : menuStyle),
-                }}
-              >
-                <ListItemIcon>
-                  <Image />
-                </ListItemIcon>
-
-                <ListItemText primary="Media" />
-              </ListItemButton> */}
-             {/* MEDIA */}
-
-<ListItemButton
-  sx={menuStyle}
-  onClick={() => setOpenMedia(!openMedia)}
->
-  <ListItemIcon>
-    <PhotoLibraryIcon />
-  </ListItemIcon>
-
-  <ListItemText primary="Media" />
-
-  {openMedia ? <ExpandLess /> : <ExpandMore />}
-</ListItemButton>
-
-<Collapse in={openMedia} timeout="auto" unmountOnExit>
-  <List component="div" disablePadding>
-
-    <ListItemButton
-      component={Link}
-      to="/media"
-      sx={{
-        pl: 5,
-        ...(location.pathname === "/media"
-          ? activeStyle
-          : menuStyle),
-      }}
-    >
-      <ListItemIcon>
-        <PhotoLibraryIcon />
-      </ListItemIcon>
-
-      <ListItemText primary="Library" />
-    </ListItemButton>
-
-    <ListItemButton
-      component={Link}
-      to="/media/upload"
-      sx={{
-        pl: 5,
-        ...(location.pathname === "/media/upload"
-          ? activeStyle
-          : menuStyle),
-      }}
-    >
-      <ListItemIcon>
-        <Add />
-      </ListItemIcon>
-
-      <ListItemText primary="Add Media" />
-    </ListItemButton>
-
-  </List>
-</Collapse>
 
             </List>
 
           </Collapse>
 
-          {/* USERS */}
+
+          {/* ========================================== */}
+          {/* PAGES */}
+          {/* ========================================== */}
+
+          <ListItemButton
+            sx={
+              location.pathname.startsWith("/pages")
+                ? {
+                    ...menuStyle,
+                    color: "#fff",
+                  }
+                : menuStyle
+            }
+            onClick={() =>
+              setOpenPages(!openPages)
+            }
+          >
+
+            <ListItemIcon>
+              <Web />
+            </ListItemIcon>
+
+            <ListItemText
+              primary="Pages"
+            />
+
+            {openPages
+              ? <ExpandLess />
+              : <ExpandMore />
+            }
+
+          </ListItemButton>
+
+
+          <Collapse
+            in={openPages}
+            timeout="auto"
+            unmountOnExit
+          >
+
+            <List
+              component="div"
+              disablePadding
+            >
+
+
+              {/* ALL PAGES */}
+
+              <ListItemButton
+                component={Link}
+                to="/pages"
+                sx={
+                  location.pathname === "/pages"
+                    ? {
+                        ...subMenuStyle,
+                        ...activeStyle,
+                      }
+                    : subMenuStyle
+                }
+              >
+
+                <ListItemIcon>
+                  <ListAlt />
+                </ListItemIcon>
+
+                <ListItemText
+                  primary="All Pages"
+                />
+
+              </ListItemButton>
+
+
+              {/* ADD PAGE */}
+
+              <ListItemButton
+                component={Link}
+                to="/pages/add"
+                sx={
+                  location.pathname === "/pages/add"
+                    ? {
+                        ...subMenuStyle,
+                        ...activeStyle,
+                      }
+                    : subMenuStyle
+                }
+              >
+
+                <ListItemIcon>
+                  <Add />
+                </ListItemIcon>
+
+                <ListItemText
+                  primary="Add Page"
+                />
+
+              </ListItemButton>
+
+            </List>
+
+          </Collapse>
+
+
+          {/* ========================================== */}
+          {/* MEDIA */}
+          {/* ========================================== */}
 
           <ListItemButton
             sx={menuStyle}
-            onClick={() => setOpenUsers(!openUsers)}
+            onClick={() =>
+              setOpenMedia(!openMedia)
+            }
           >
+
+            <ListItemIcon>
+              <PhotoLibrary />
+            </ListItemIcon>
+
+            <ListItemText
+              primary="Media"
+            />
+
+            {openMedia
+              ? <ExpandLess />
+              : <ExpandMore />
+            }
+
+          </ListItemButton>
+
+
+          <Collapse
+            in={openMedia}
+            timeout="auto"
+            unmountOnExit
+          >
+
+            <List
+              component="div"
+              disablePadding
+            >
+
+
+              {/* MEDIA LIBRARY */}
+
+              <ListItemButton
+                component={Link}
+                to="/media"
+                sx={
+                  location.pathname === "/media"
+                    ? {
+                        ...subMenuStyle,
+                        ...activeStyle,
+                      }
+                    : subMenuStyle
+                }
+              >
+
+                <ListItemIcon>
+                  <PhotoLibrary />
+                </ListItemIcon>
+
+                <ListItemText
+                  primary="Library"
+                />
+
+              </ListItemButton>
+
+
+              {/* ADD MEDIA */}
+
+              <ListItemButton
+                component={Link}
+                to="/media/upload"
+                sx={
+                  location.pathname ===
+                  "/media/upload"
+                    ? {
+                        ...subMenuStyle,
+                        ...activeStyle,
+                      }
+                    : subMenuStyle
+                }
+              >
+
+                <ListItemIcon>
+                  <Add />
+                </ListItemIcon>
+
+                <ListItemText
+                  primary="Add Media"
+                />
+
+              </ListItemButton>
+
+            </List>
+
+          </Collapse>
+
+
+          {/* ========================================== */}
+          {/* USERS */}
+          {/* ========================================== */}
+
+          <ListItemButton
+            sx={menuStyle}
+            onClick={() =>
+              setOpenUsers(!openUsers)
+            }
+          >
+
             <ListItemIcon>
               <People />
             </ListItemIcon>
 
-            <ListItemText primary="Users" />
+            <ListItemText
+              primary="Users"
+            />
 
-            {openUsers ? <ExpandLess /> : <ExpandMore />}
+            {openUsers
+              ? <ExpandLess />
+              : <ExpandMore />
+            }
+
           </ListItemButton>
 
-          <Collapse in={openUsers}>
 
-            <List>
+          <Collapse
+            in={openUsers}
+            timeout="auto"
+            unmountOnExit
+          >
+
+            <List
+              component="div"
+              disablePadding
+            >
+
+
+              {/* ALL USERS */}
 
               <ListItemButton
                 component={Link}
                 to="/users"
-                sx={{
-                  pl: 5,
-                  ...(location.pathname === "/users"
-                    ? activeStyle
-                    : menuStyle),
-                }}
+                sx={
+                  location.pathname === "/users"
+                    ? {
+                        ...subMenuStyle,
+                        ...activeStyle,
+                      }
+                    : subMenuStyle
+                }
               >
+
                 <ListItemIcon>
                   <People />
                 </ListItemIcon>
 
-                <ListItemText primary="All Users" />
+                <ListItemText
+                  primary="All Users"
+                />
+
               </ListItemButton>
+
+
+              {/* ADD USER */}
 
               <ListItemButton
                 component={Link}
                 to="/users/add"
-                sx={{
-                  pl: 5,
-                  ...(location.pathname === "/users/add"
-                    ? activeStyle
-                    : menuStyle),
-                }}
+                sx={
+                  location.pathname === "/users/add"
+                    ? {
+                        ...subMenuStyle,
+                        ...activeStyle,
+                      }
+                    : subMenuStyle
+                }
               >
+
                 <ListItemIcon>
                   <PersonAdd />
                 </ListItemIcon>
 
-                <ListItemText primary="Add User" />
+                <ListItemText
+                  primary="Add User"
+                />
+
               </ListItemButton>
+
+
+              {/* PROFILE */}
 
               <ListItemButton
                 component={Link}
                 to="/profile"
-                sx={{
-                  pl: 5,
-                  ...(location.pathname === "/profile"
-                    ? activeStyle
-                    : menuStyle),
-                }}
+                sx={
+                  location.pathname === "/profile"
+                    ? {
+                        ...subMenuStyle,
+                        ...activeStyle,
+                      }
+                    : subMenuStyle
+                }
               >
+
                 <ListItemIcon>
                   <AccountCircle />
                 </ListItemIcon>
 
-                <ListItemText primary="Profile" />
+                <ListItemText
+                  primary="Profile"
+                />
+
               </ListItemButton>
 
             </List>
 
           </Collapse>
 
+
+          {/* ========================================== */}
           {/* SETTINGS */}
+          {/* ========================================== */}
 
           <ListItemButton
             component={Link}
@@ -362,16 +677,23 @@ export default function Sidebar() {
                 : menuStyle
             }
           >
+
             <ListItemIcon>
               <Settings />
             </ListItemIcon>
 
-            <ListItemText primary="Settings" />
+            <ListItemText
+              primary="Settings"
+            />
+
           </ListItemButton>
+
 
         </List>
 
       </Box>
+
     </Drawer>
+
   );
 }

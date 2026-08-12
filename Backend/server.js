@@ -33,7 +33,9 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const tagRoutes = require("./routes/tagRoutes");
 const postRoutes = require("./routes/postRoutes");
 const mediaRoutes = require("./routes/mediaRoutes");
+const pagesRouter = require("./routes/pages");
 
+app.use("/api/pages", pagesRouter);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
