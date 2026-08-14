@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   Paper,
@@ -23,7 +23,7 @@ import {
   CardContent,
   Grid,
   Stack,
-   IconButton,
+  IconButton,
 } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
@@ -31,36 +31,70 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import ArticleIcon from "@mui/icons-material/Article";
+import CommentIcon from "@mui/icons-material/Comment";
 
 export default function AllPosts() {
+  const navigate = useNavigate();
 
   const [posts, setPosts] = useState([]);
   const [search, setSearch] = useState("");
+
+  // =====================================================
+  // FETCH POSTS
+  // =====================================================
 
   useEffect(() => {
     fetchPosts();
   }, []);
 
   const fetchPosts = async () => {
-    const res = await api.get("/posts");
-    setPosts(res.data.posts);
+    try {
+      const res = await api.get("/posts");
+
+      console.log("POSTS:", res.data);
+
+      setPosts(res.data?.posts || []);
+    } catch (error) {
+      console.error("FETCH POSTS ERROR:", error);
+    }
   };
+
+  // =====================================================
+  // DELETE POST
+  // =====================================================
 
   const deletePost = async (id) => {
     if (!window.confirm("Delete this post?")) return;
 
-    await api.delete(`/posts/${id}`);
-    fetchPosts();
+    try {
+      await api.delete(`/posts/${id}`);
+
+      fetchPosts();
+    } catch (error) {
+      console.error("DELETE POST ERROR:", error);
+    }
   };
 
+  // =====================================================
+  // SEARCH
+  // =====================================================
+
   const filteredPosts = posts.filter((post) =>
-    post.post_title.toLowerCase().includes(search.toLowerCase())
+    (post.post_title || "")
+      .toLowerCase()
+      .includes(search.toLowerCase())
   );
+
+  // =====================================================
+  // UI
+  // =====================================================
 
   return (
     <Box>
 
-      {/* Header */}
+      {/* =================================================
+          HEADER
+      ================================================= */}
 
       <Box
         display="flex"
@@ -89,37 +123,62 @@ export default function AllPosts() {
         </Button>
       </Box>
 
-      {/* Stats */}
+      {/* =================================================
+          STATS
+      ================================================= */}
 
       <Grid container spacing={3} mb={4}>
 
-        <Grid item xs={12} md={4}>
+  <Grid size={{ xs: 12, md: 4 }}>
           <Card>
             <CardContent>
-              <Stack direction="row" spacing={2}>
-                <Avatar sx={{ bgcolor: "#1976d2" }}>
+
+              <Stack
+                direction="row"
+                spacing={2}
+              >
+
+                <Avatar
+                  sx={{
+                    bgcolor: "#1976d2",
+                  }}
+                >
                   <ArticleIcon />
                 </Avatar>
 
                 <Box>
-                  <Typography color="text.secondary">
+
+                  <Typography
+                    color="text.secondary"
+                  >
                     Total Posts
                   </Typography>
 
-                  <Typography variant="h5">
+                  <Typography
+                    variant="h5"
+                  >
                     {posts.length}
                   </Typography>
+
                 </Box>
+
               </Stack>
+
             </CardContent>
           </Card>
         </Grid>
-
       </Grid>
 
-      {/* Search */}
+      {/* =================================================
+          SEARCH
+      ================================================= */}
 
-      <Paper sx={{ p: 3, mb: 3 }}>
+      <Paper
+        sx={{
+          p: 3,
+          mb: 3,
+        }}
+      >
 
         <Box
           display="flex"
@@ -128,8 +187,11 @@ export default function AllPosts() {
 
           <Select
             defaultValue=""
-            sx={{ width: 180 }}
+            sx={{
+              width: 180,
+            }}
           >
+
             <MenuItem value="">
               Bulk Actions
             </MenuItem>
@@ -148,7 +210,9 @@ export default function AllPosts() {
               setSearch(e.target.value)
             }
             InputProps={{
-              startAdornment: <SearchIcon />,
+              startAdornment: (
+                <SearchIcon />
+              ),
             }}
           />
 
@@ -156,7 +220,9 @@ export default function AllPosts() {
 
       </Paper>
 
-      {/* Table */}
+      {/* =================================================
+          TABLE
+      ================================================= */}
 
       <Paper>
 
@@ -202,120 +268,166 @@ export default function AllPosts() {
 
             <TableBody>
 
-              {filteredPosts.map((post) => (
+              {filteredPosts.map(
+                (post) => (
 
-                <TableRow
-                  hover
-                  key={post.id}
-                >
+                  <TableRow
+                    hover
+                    key={post.id}
+                  >
 
-                  <TableCell>
-                    <Checkbox />
-                  </TableCell>
+                    {/* CHECKBOX */}
 
-                  <TableCell>
+                    <TableCell>
+                      <Checkbox />
+                    </TableCell>
 
-                    <Box display="flex" gap={2}>
+                    {/* POST */}
 
-                     <Avatar
-    variant="rounded"
-    src={
-        post.guid
-            ? `http://localhost:5000/uploads/images/${post.guid}`
-            : "/no-image.png"
-    }
-    sx={{
-        width:70,
-        height:50,
-        borderRadius:2
-    }}
-/>
+                    <TableCell>
 
-                      <Box>
+                      <Box
+                        display="flex"
+                        gap={2}
+                      >
 
-                        <Typography
-                          fontWeight={600}
+                        <Avatar
+                          variant="rounded"
+                          src={
+                            post.guid
+                              ? `http://localhost:5000/uploads/images/${post.guid}`
+                              : "/no-image.png"
+                          }
+                          sx={{
+                            width: 70,
+                            height: 50,
+                            borderRadius: 2,
+                          }}
+                        />
+
+                        <Box>
+
+                          <Typography
+                            fontWeight={600}
+                          >
+                            {post.post_title}
+                          </Typography>
+
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                          >
+                            {post.post_name}
+                          </Typography>
+
+                        </Box>
+
+                      </Box>
+
+                    </TableCell>
+
+                    {/* AUTHOR */}
+
+                    <TableCell>
+
+                      <Box
+                        display="flex"
+                        gap={1}
+                      >
+
+                        <Avatar
+                          sx={{
+                            width: 32,
+                            height: 32,
+                          }}
                         >
-                          {post.post_title}
-                        </Typography>
+                          {post.author?.charAt(0)}
+                        </Avatar>
 
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                        >
-                          {post.post_name}
+                        <Typography>
+                          {post.author}
                         </Typography>
 
                       </Box>
 
-                    </Box>
+                    </TableCell>
 
-                  </TableCell>
+                    {/* STATUS */}
 
-                  <TableCell>
+                    <TableCell>
 
-                    <Box display="flex" gap={1}>
+                      <Chip
+                        label={post.post_status}
+                        color={
+                          post.post_status ===
+                          "published"
+                            ? "success"
+                            : "warning"
+                        }
+                        size="small"
+                      />
 
-                      <Avatar
-                        sx={{
-                          width: 32,
-                          height: 32,
-                        }}
+                    </TableCell>
+
+                    {/* DATE */}
+
+                    <TableCell>
+
+                      {post.post_date
+                        ? new Date(
+                            post.post_date
+                          ).toLocaleDateString()
+                        : "-"}
+
+                    </TableCell>
+
+                    {/* ACTIONS */}
+
+                    <TableCell align="center">
+
+                      {/* EDIT */}
+
+                      <IconButton
+                        color="primary"
+                        component={Link}
+                        to={`/posts/edit/${post.id}`}
+                        title="Edit Post"
                       >
-                        {post.author?.charAt(0)}
-                      </Avatar>
+                        <EditIcon />
+                      </IconButton>
 
-                      <Typography>
-                        {post.author}
-                      </Typography>
+                      {/* COMMENTS */}
 
-                    </Box>
+                      <IconButton
+                        color="secondary"
+                        onClick={() =>
+                          navigate(
+                            `/comments/post/${post.id}`
+                          )
+                        }
+                        title="View Comments"
+                      >
+                        <CommentIcon />
+                      </IconButton>
 
-                  </TableCell>
+                      {/* DELETE */}
 
-                  <TableCell>
+                      <IconButton
+                        color="error"
+                        onClick={() =>
+                          deletePost(post.id)
+                        }
+                        title="Delete Post"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
 
-                   <Chip
-    label={post.post_status}
-    color={
-        post.post_status==="published"
-            ? "success"
-            : "warning"
-    }
-    size="small"
-/>
-                  </TableCell>
+                    </TableCell>
 
-                  <TableCell>
+                  </TableRow>
 
-                    {new Date(
-                      post.post_date
-                    ).toLocaleDateString()}
-
-                  </TableCell>
-
-                  <TableCell align="center">
-
-                   <IconButton
-color="primary"
-component={Link}
-to={`/posts/edit/${post.id}`}
->
-    <EditIcon/>
-</IconButton>
-
-<IconButton
-color="error"
-onClick={()=>deletePost(post.id)}
->
-    <DeleteIcon/>
-</IconButton>
-
-                  </TableCell>
-
-                </TableRow>
-
-              ))}
+                )
+              )}
 
             </TableBody>
 

@@ -15,6 +15,11 @@ import UploadMedia from "./pages/media/UploadMedia";
 import AddPage from "./pages/pages/AddPage";
 import AllPage from "./pages/pages/AllPage";
 import ViewPage from "./pages/pages/ViewPage";
+import AllComments from "./pages/comments/AllComments";
+import AddComment from "./pages/comments/AddComment";
+import PostComments from "./pages/comments/PostComments";
+import Themes from "./pages/Appearance/Themes";
+import Customize from "./pages/Appearance/Customize";
 
 function App() {
   return (
@@ -71,7 +76,33 @@ function App() {
   element={<ViewPage />}
 />
 <Route path="/pages" element={<AllPage />} />
+<Route
+  path="/comments"
+  element={<AllComments />}
+/>
 
+<Route
+  path="/comments/add"
+  element={<AddComment />}
+/>
+
+<Route
+  path="/comments/add/:postId"
+  element={<AddComment />}
+/>
+
+<Route
+  path="/comments/post/:postId"
+  element={<PostComments />}
+/>
+ <Route
+  path="/appearance/themes"
+  element={<Themes />}
+/>
+<Route
+  path="/appearance/customize"
+  element={<Customize />}
+/>
         <Route
           path="/profile"
           element={

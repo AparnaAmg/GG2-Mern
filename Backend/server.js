@@ -34,6 +34,9 @@ const tagRoutes = require("./routes/tagRoutes");
 const postRoutes = require("./routes/postRoutes");
 const mediaRoutes = require("./routes/mediaRoutes");
 const pagesRouter = require("./routes/pages");
+const commentsRouter = require("./routes/comments");
+const themesRouter = require("./routes/themes");
+const customizerRouter = require("./routes/customizer");
 
 app.use("/api/pages", pagesRouter);
 app.use("/api/auth", authRoutes);
@@ -42,6 +45,9 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/tags", tagRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/media", mediaRoutes);
+app.use("/api/comments", commentsRouter);
+app.use("/api/themes", themesRouter);
+app.use("/api/customizer",customizerRouter);
 
 app.get("/", (req, res) => {
     res.json({

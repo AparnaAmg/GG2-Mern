@@ -1,5 +1,11 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import CommentIcon from "@mui/icons-material/Comment";
+import PaletteIcon from "@mui/icons-material/Palette";
+import { useNavigate } from "react-router-dom";
+import {
+  Comment,
+} from "@mui/icons-material";
 
 import {
   Drawer,
@@ -32,6 +38,8 @@ import {
 
 
 export default function Sidebar() {
+
+  const navigate = useNavigate();
 
   const location = useLocation();
 
@@ -542,6 +550,44 @@ export default function Sidebar() {
 
           </Collapse>
 
+            {/* ========================================== */}
+          {/* COMMENTS */}
+          {/* ========================================== */}
+
+<ListItemButton
+  component={Link}
+  to="/comments"
+  sx={
+    location.pathname === "/comments"
+      ? activeStyle
+      : menuStyle
+  }
+>
+  <ListItemIcon>
+    <CommentIcon />
+  </ListItemIcon>
+
+  <ListItemText primary="Comments" />
+</ListItemButton>
+
+          {/* ========================================== */}
+          {/* APPEARANCE */}
+          {/* ========================================== */}
+
+<ListItemButton
+  onClick={() =>
+    navigate("/appearance/themes")
+  }
+  onClick={() =>
+  navigate("/appearance/customize")
+}
+>
+  <ListItemIcon>
+    <PaletteIcon />
+  </ListItemIcon>
+
+  <ListItemText primary="Appearance" />
+</ListItemButton>
 
           {/* ========================================== */}
           {/* USERS */}
