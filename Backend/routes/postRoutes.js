@@ -3,36 +3,61 @@ const express = require("express");
 const router = express.Router();
 
 const upload = require("../middlewares/upload");
+const authorizeRoles = require("../middlewares/roleMiddleware");
 
 const {
-
     getPosts,
     getPostById,
-
     addPost,
-     updatePost,
-
+    updatePost,
     deletePost
-
 } = require("../controllers/postController");
-// Get all posts
-router.get("/", getPosts);
 
-router.post(
-
+// =========================
+// Get All Posts
+// =========================
+router.get(
     "/",
-
-    upload.single("featuredImage"),
-
-    addPost
-
+    authorizeRoles("super_admin", "author"),
+    getPosts
 );
-// Get single post
-router.get("/:id", getPostById);
 
-// Add post
-router.put("/:id", upload.single("featuredImage"), updatePost);
-// Delete post
-router.delete("/:id", deletePost);
+// =========================
+// Add Post
+// =========================
+router.post(
+    "/",
+    authorizeRoles("super_admin", "author"),
+    upload.single("featuredImage"),
+    addPost
+);
+
+// =========================
+// Get Single Post
+// =========================
+router.get(
+    "/:id",
+    authorizeRoles("super_admin", "author"),
+    getPostById
+);
+
+// =========================
+// Update Post
+// =========================
+router.put(
+    "/:id",
+    authorizeRoles("super_admin", "author"),
+    upload.single("featuredImage"),
+    updatePost
+);
+
+// =========================
+// Delete Post
+// =========================
+router.delete(
+    "/:id",
+    authorizeRoles("super_admin", "author"),
+    deletePost
+);
 
 module.exports = router;

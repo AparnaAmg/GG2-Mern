@@ -20,6 +20,7 @@ import AddComment from "./pages/comments/AddComment";
 import PostComments from "./pages/comments/PostComments";
 import Themes from "./pages/Appearance/Themes";
 import Customize from "./pages/Appearance/Customize";
+import Menus from "./pages/Appearance/Menus";
 
 function App() {
   return (
@@ -102,6 +103,14 @@ function App() {
 <Route
   path="/appearance/customize"
   element={<Customize />}
+/>
+<Route
+  path="/appearance/menus"
+  element={
+    <ProtectedRoute>
+      <Menus />
+    </ProtectedRoute>
+  }
 />
         <Route
           path="/profile"

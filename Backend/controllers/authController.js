@@ -7,7 +7,7 @@ const login = async (req, res) => {
 
     const { email, password } = req.body;
 
-    console.log("Request Body:", req.body);
+    
 
 const result = await pool.query(
   `
@@ -16,13 +16,14 @@ const result = await pool.query(
       r.role_name
   FROM gg2_users u
   JOIN gg2_roles r
-      ON r.id = 1
+    ON r.id = u.role_id
   WHERE u.user_email = $1
+    AND u.is_active = true
   `,
   [email]
 );
 
-    console.log(result.rows);
+    
 
     if (result.rows.length === 0) {
       return res.status(401).json({

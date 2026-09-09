@@ -3,23 +3,27 @@ const pool = require("../config/db");
 // =========================
 // Get All Posts
 // =========================
+// =========================
+// Get All Posts
+// =========================
 const getPosts = async (req, res) => {
   try {
     const result = await pool.query(`
-SELECT
-    p.id,
-    p.post_title,
-    p.post_name,
-    p.post_status,
-    p.post_date,
-    p.guid,
-    u.display_name AS author
-FROM gg2_posts p
-LEFT JOIN gg2_users u
-ON p.post_author = u.id
-WHERE p.post_type='post'
-ORDER BY p.post_date DESC
-`);
+      SELECT
+          p.id,
+          p.post_title,
+          p.post_name,
+          p.post_status,
+          p.post_date,
+          p.guid,
+          u.display_name AS author
+      FROM gg2_posts p
+      LEFT JOIN gg2_users u
+          ON p.post_author = u.id
+      WHERE p.post_type = 'post'
+      AND p.is_deleted = false
+      ORDER BY p.post_date DESC
+    `);
 
     res.json({
       success: true,
@@ -35,7 +39,6 @@ ORDER BY p.post_date DESC
     });
   }
 };
-
 // =========================
 // Add New Post
 // =========================
@@ -275,10 +278,11 @@ const updatePost = async (req, res) => {
 // Delete Post
 // =========================
 const deletePost = async (req, res) => {
-
   try {
+    console.log("DELETE POST ID:", req.params.id);
+    console.log("DELETE USER:", req.user);
 
-    await pool.query(
+    const result = await pool.query(
       `
       UPDATE gg2_posts
       SET is_deleted = true
@@ -287,22 +291,28 @@ const deletePost = async (req, res) => {
       [req.params.id]
     );
 
+    console.log("DELETE RESULT:", result.rowCount);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Post not found",
+      });
+    }
+
     res.json({
       success: true,
-      message: "Post Deleted",
+      message: "Post Deleted Successfully",
     });
 
   } catch (err) {
-
-    console.log(err);
+    console.error("DELETE POST ERROR:", err);
 
     res.status(500).json({
       success: false,
       message: err.message,
     });
-
   }
-
 };
 
 // =========================

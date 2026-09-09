@@ -37,17 +37,25 @@ const pagesRouter = require("./routes/pages");
 const commentsRouter = require("./routes/comments");
 const themesRouter = require("./routes/themes");
 const customizerRouter = require("./routes/customizer");
+const menuRoutes = require("./routes/menus");
+const authenticateToken = require("./middlewares/authMiddleware");
 
-app.use("/api/pages", pagesRouter);
+app.use("/api/pages", authenticateToken, pagesRouter);
 app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/categories", categoryRoutes);
-app.use("/api/tags", tagRoutes);
-app.use("/api/posts", postRoutes);
-app.use("/api/media", mediaRoutes);
-app.use("/api/comments", commentsRouter);
-app.use("/api/themes", themesRouter);
-app.use("/api/customizer",customizerRouter);
+
+app.use("/api/users", authenticateToken, userRoutes);
+
+app.use("/api/categories", authenticateToken, categoryRoutes);
+app.use("/api/tags", authenticateToken, tagRoutes);
+app.use("/api/posts", authenticateToken, postRoutes);
+app.use("/api/media", authenticateToken, mediaRoutes);
+app.use("/api/comments", authenticateToken, commentsRouter);
+app.use("/api/themes", authenticateToken, themesRouter);
+app.use("/api/customizer", authenticateToken, customizerRouter);
+
+app.use("/api/menus", authenticateToken, menuRoutes);
+
+
 
 app.get("/", (req, res) => {
     res.json({
@@ -71,7 +79,17 @@ app.get("/db-test", async (req, res) => {
     }
 });
 
+app.get("/api/test-auth", authenticateToken, (req, res) => {
+    res.json({
+        success: true,
+        message: "Authentication successful",
+        user: req.user,
+    });
+});
+
 const PORT = process.env.PORT || 5000;
+
+
 
 app.listen(PORT, () => {
     console.log(
